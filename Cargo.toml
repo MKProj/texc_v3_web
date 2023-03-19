@@ -1,0 +1,19 @@
+[package]
+name = "texc_v3_web"
+version = "0.1.0"
+edition = "2021"
+description = "Provides a local web application to build TexCreate projects."
+license = "MIT"
+homepage = "https://texcreate.mkproj.com"
+repository = "https://github.com/Mustafif/texc_v3_web"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+reqwest = "0.11.14"
+rocket = "0.5.0-rc.2"
+texc_v3_compiler_conf = "0.1.0"
+texcore = { version = "0.6.0", features = ["texcreate_template"] }
+texcreate_repo = "0.1.2"
+tokio = { version = "1.26.0", features = ["full"] }
+zip = "0.6.4"

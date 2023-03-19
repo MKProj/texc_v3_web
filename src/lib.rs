@@ -18,6 +18,12 @@ use tokio::spawn;
 use zip::write::FileOptions;
 use zip::{CompressionMethod, ZipWriter};
 
+#[derive(Debug, Clone, Copy)]
+pub enum Mode{
+    Dark, 
+    Light
+}
+
 /// A web version of the config that is simplified and only
 /// uses mkproj templates
 #[derive(Debug, Clone, FromForm)]
@@ -146,10 +152,14 @@ pub async fn template_html_options() -> String {
     vec.join("\n")
 }
 /// Builds the index.html file
-pub async fn build_index(path: Option<String>) -> Result<()> {
+pub async fn build_index(path: Option<String>, mode: Option<Mode>) -> Result<()> {
+    let mode = mode.unwrap_or(Mode::Dark);
     let path = path.unwrap_or("index.html".to_string());
     let mut file = File::create(&path).await?;
-    let mut index = index::INDEX.to_string();
+    let mut index = match mode{
+        Mode::Dark => index::INDEX_DM.to_owned(), 
+        Mode::Light => index::INDEX_LM.to_owned()
+    };
     index = index.replace("{templates}", &template_html_options().await);
     file.write_all(index.as_bytes()).await?;
     Ok(())
@@ -157,7 +167,7 @@ pub async fn build_index(path: Option<String>) -> Result<()> {
 
 #[get("/")]
 async fn texc_index() -> Option<NamedFile> {
-    match build_index(None).await {
+    match build_index(None, None).await {
         Ok(()) => (),
         Err(_) => return None,
     }
